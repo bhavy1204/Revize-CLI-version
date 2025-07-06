@@ -2,15 +2,20 @@
 
 import inquirer from 'inquirer';
 
-let todayTask = [];
-let todayReviseList = [];
+let todayStudyLog = [];
+let firstReviseList = [];
+let secondReviseList = [];
+let thirdReviseList = [];
+let fourthReviseList = [];
+let fifthReviseList = [];
+let sixthReviseList = [];
 
 const delay = (ms) =>
     new Promise((r) =>
         setTimeout(r, ms)
     );
 
-const updatetodayList = async () => {
+const updatetodayStudyLog = async () => {
     const listResponse = await inquirer.prompt([{
         message: "What did you study....?",
         name: "studyLog",
@@ -24,7 +29,45 @@ const updatetodayList = async () => {
     ]);
     let ISOdate = new Date().toISOString();
     let localDate = new Date(ISOdate).toLocaleString();
-    todayTask.push({ task: listResponse.studyLog, note: listResponse.notes, ISOdate, localDate, done:false });
+    todayStudyLog.push({ task: listResponse.studyLog, note: listResponse.notes, ISOdate, localDate, done: false });
+
+    // Next day
+    let firstReviseDateObj = new Date(new Date(ISOdate).getTime + 86400000);
+    let firstReviseDate = firstReviseDateObj.toISOString();
+    let firstReviseDateLocal = firstReviseDate.toLocaleString();
+    firstReviseList.push({ task: listResponse.studyLog, note: listResponse.notes, firstReviseDate, firstReviseDateLocal, done: false });
+
+    // 3 days
+    let secondReviseDateObj = new Date(new Date(ISOdate).getTime + 259200000);
+    let secondReviseDate = secondReviseDateObj.toISOString();
+    let secondReviseDateLocal = secondReviseDate.toLocaleString();
+    secondReviseList.push({ task: listResponse.studyLog, note: listResponse.notes, secondReviseDate, secondReviseDateLocal, done: false });
+
+    // 7 days
+    let thirdReviseDateObj = new Date(new Date(ISOdate).getTime + 604800000);
+    let thirdReviseDate = thirdReviseDateObj.toISOString();
+    let thirdReviseDateLocal = thirdReviseDate.toLocaleString();
+    thirdReviseList.push({ task: listResponse.studyLog, note: listResponse.notes, thirdReviseDate, thirdReviseDateLocal, done: false });
+
+    // 30 days
+    let fourthReviseDateObj = new Date(new Date(ISOdate).getTime + 2592000000);
+    let fourthReviseDate = fourthReviseDateObj.toISOString();
+    let fourthReviseDateLocal = fourthReviseDate.toLocaleString();
+    fourthReviseList.push({ task: listResponse.studyLog, note: listResponse.notes, fourthReviseDate, fourthReviseDateLocal, done: false });
+
+    // 60 days
+    let fifthReviseDateObj = new Date(new Date(ISOdate).getTime + 5184000000);
+    let fifthReviseDate = fifthReviseDateObj.toISOString();
+    let fifthReviseDateLocal = fifthReviseDate.toLocaleString();
+    fifthReviseList.push({ task: listResponse.studyLog, note: listResponse.notes, fifthReviseDate, fifthReviseDateLocal, done: false });
+
+    // 90 days
+    let sixthReviseDateObj = new Date(new Date(ISOdate).getTime + 7776000000);
+    let sixthReviseDate = sixthReviseDateObj.toISOString();
+    let sixthReviseDateLocal = sixthReviseDate.toLocaleString();
+    sixthReviseList.push({ task: listResponse.studyLog, note: listResponse.notes, sixthReviseDate, sixthReviseDateLocal, done: false });
+
+
     console.log("Saved successfully");
     await delay(2000);
     console.clear();
@@ -32,11 +75,6 @@ const updatetodayList = async () => {
 }
 
 const showTodaysReviseList = async () => {
-    if (todayReviseList.length === 0) {
-        console.log("No task to show ");
-        await delay(1000);
-        return;
-    }
 
     const reviseToday = todayTask.map((item, idx) => ({
         name: `[${idx + 1}]. ${item.task}`,
@@ -78,7 +116,7 @@ const menu = async () => {
             ]
         }])
         if (menuResponse.choice === "updateTask") {
-            await updatetodayList();
+            await updatetodayStudyLog();
         } else if (menuResponse.choice === "seeReviseList") {
             await showTodaysReviseList();
         } else if (menuResponse.choice === "Exit") {
