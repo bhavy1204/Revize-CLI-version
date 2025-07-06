@@ -2,6 +2,7 @@
 
 import inquirer from 'inquirer';
 
+let todayReviseList = [];
 let todayStudyLog = [];
 let firstReviseList = [];
 let secondReviseList = [];
@@ -9,6 +10,7 @@ let thirdReviseList = [];
 let fourthReviseList = [];
 let fifthReviseList = [];
 let sixthReviseList = [];
+
 
 const delay = (ms) =>
     new Promise((r) =>
@@ -32,37 +34,37 @@ const updatetodayStudyLog = async () => {
     todayStudyLog.push({ task: listResponse.studyLog, note: listResponse.notes, ISOdate, localDate, done: false });
 
     // Next day
-    let firstReviseDateObj = new Date(new Date(ISOdate).getTime + 86400000);
+    let firstReviseDateObj = new Date(new Date(ISOdate).getTime() + 86400000);
     let firstReviseDate = firstReviseDateObj.toISOString();
     let firstReviseDateLocal = firstReviseDate.toLocaleString();
     firstReviseList.push({ task: listResponse.studyLog, note: listResponse.notes, firstReviseDate, firstReviseDateLocal, done: false });
 
     // 3 days
-    let secondReviseDateObj = new Date(new Date(ISOdate).getTime + 259200000);
+    let secondReviseDateObj = new Date(new Date(ISOdate).getTime() + 259200000);
     let secondReviseDate = secondReviseDateObj.toISOString();
     let secondReviseDateLocal = secondReviseDate.toLocaleString();
     secondReviseList.push({ task: listResponse.studyLog, note: listResponse.notes, secondReviseDate, secondReviseDateLocal, done: false });
 
     // 7 days
-    let thirdReviseDateObj = new Date(new Date(ISOdate).getTime + 604800000);
+    let thirdReviseDateObj = new Date(new Date(ISOdate).getTime() + 604800000);
     let thirdReviseDate = thirdReviseDateObj.toISOString();
     let thirdReviseDateLocal = thirdReviseDate.toLocaleString();
     thirdReviseList.push({ task: listResponse.studyLog, note: listResponse.notes, thirdReviseDate, thirdReviseDateLocal, done: false });
 
     // 30 days
-    let fourthReviseDateObj = new Date(new Date(ISOdate).getTime + 2592000000);
+    let fourthReviseDateObj = new Date(new Date(ISOdate).getTime() + 2592000000);
     let fourthReviseDate = fourthReviseDateObj.toISOString();
     let fourthReviseDateLocal = fourthReviseDate.toLocaleString();
     fourthReviseList.push({ task: listResponse.studyLog, note: listResponse.notes, fourthReviseDate, fourthReviseDateLocal, done: false });
 
     // 60 days
-    let fifthReviseDateObj = new Date(new Date(ISOdate).getTime + 5184000000);
+    let fifthReviseDateObj = new Date(new Date(ISOdate).getTime() + 5184000000);
     let fifthReviseDate = fifthReviseDateObj.toISOString();
     let fifthReviseDateLocal = fifthReviseDate.toLocaleString();
     fifthReviseList.push({ task: listResponse.studyLog, note: listResponse.notes, fifthReviseDate, fifthReviseDateLocal, done: false });
 
     // 90 days
-    let sixthReviseDateObj = new Date(new Date(ISOdate).getTime + 7776000000);
+    let sixthReviseDateObj = new Date(new Date(ISOdate).getTime() + 7776000000);
     let sixthReviseDate = sixthReviseDateObj.toISOString();
     let sixthReviseDateLocal = sixthReviseDate.toLocaleString();
     sixthReviseList.push({ task: listResponse.studyLog, note: listResponse.notes, sixthReviseDate, sixthReviseDateLocal, done: false });
@@ -74,20 +76,64 @@ const updatetodayStudyLog = async () => {
     return;
 }
 
-const showTodaysReviseList = async () => {
+const showTodaysRevisionList = async () => {
 
-    const reviseToday = todayTask.map((item, idx) => ({
-        name: `[${idx + 1}]. ${item.task}`,
-        value: idx,
-    }));
+    let today = new Date().toISOString().slice(0, 10);
+    todayReviseList = [];
 
-    reviseToday.push({ name: ">>> Go bak", value: -1 });
+    // first
+    todayReviseList.push(
+        ...firstReviseList.filter(t =>
+            t.firstReviseDate.startsWith(today)
+        )
+    )
+
+    // second
+    todayReviseList.push(
+        ...secondReviseList.filter(t =>
+            t.secondReviseDate.startsWith(today)
+        )
+    )
+
+    // third
+    todayReviseList.push(
+        ...thirdReviseList.filter(t =>
+            t.thirdReviseDate.startsWith(today)
+        )
+    )
+
+    // fourth
+    todayReviseList.push(
+        ...fourthReviseList.filter(t =>
+            t.fourthReviseDate.startsWith(today)
+        )
+    )
+
+    // fifth
+    todayReviseList.push(
+        ...fifthReviseList.filter(t =>
+            t.fifthReviseDate.startsWith(today)
+        )
+    )
+
+    // sixth
+    todayReviseList.push(
+        ...sixthReviseList.filter(t =>
+            t.sixthReviseDate.startsWith(today)
+        )
+    )
+
+    if (todayReviseList.length === 0) {
+        return;
+    }
+
+    todayReviseList.push({ name: ">>> Go bak", value: -1 });
 
     const selected = await inquirer.prompt([{
         name: "revesionList",
         type: "list",
         message: "Choose any one",
-        choices: reviseToday,
+        choices: todayReviseList,
     }]);
 
     if (selected.revesionList === -1) {
@@ -97,6 +143,26 @@ const showTodaysReviseList = async () => {
     // await viewDetailsOfLog(selected);
 
     await delay(2000);
+    console.clear();
+    return;
+}
+
+// temperory functions
+const first = async () => {
+
+    console.log(firstReviseList);
+    console.log("-------------------------------------------------------------");
+    console.log(secondReviseList);
+    console.log("-------------------------------------------------------------");
+    console.log(thirdReviseList);
+    console.log("-------------------------------------------------------------");
+    console.log(fourthReviseList);
+    console.log("-------------------------------------------------------------");
+    console.log(fifthReviseList);
+    console.log("-------------------------------------------------------------");
+    console.log(sixthReviseList);
+    console.log("-------------------------------------------------------------");
+    await delay(9000);
     console.clear();
     return;
 }
@@ -118,9 +184,10 @@ const menu = async () => {
         if (menuResponse.choice === "updateTask") {
             await updatetodayStudyLog();
         } else if (menuResponse.choice === "seeReviseList") {
-            await showTodaysReviseList();
+            await showTodaysRevisionList();
         } else if (menuResponse.choice === "Exit") {
-            exit = true;
+            await first();
+            // exit = true;
         }
     }
 }
