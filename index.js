@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { writeRevesionData } from './filehandler.js';
+import { readRevesionData, writeRevesionData } from './filehandler.js';
 import inquirer from 'inquirer';
 
 let todayReviseList = [];
@@ -10,7 +10,6 @@ let thirdReviseList = [];
 let fourthReviseList = [];
 let fifthReviseList = [];
 let sixthReviseList = [];
-
 
 const delay = (ms) =>
     new Promise((r) =>
@@ -24,7 +23,7 @@ const updatetodayStudyLog = async () => {
         type: "input",
         required: true,
     }, {
-        message: "ANy special note.?",
+        message: "Any special note.? ",
         name: "notes",
         type: "input"
     }
@@ -95,49 +94,30 @@ const showTodaysRevisionList = async () => {
     let today = new Date().toISOString().slice(0, 10);
     todayReviseList = [];
 
-    // first
-    todayReviseList.push(
-        ...firstReviseList.filter(t =>
-            t.firstReviseDate.startsWith(today)
-        )
-    )
+    const allFiles = [
+        { key: "first", dateKey: "firstReviseDate" },
+        { key: "second", dateKey: "secondReviseDate" },
+        { key: "third", dateKey: "thirdReviseDate" },
+        { key: "fourth", dateKey: "fourthReviseDate" },
+        { key: "fifth", dateKey: "fifthReviseDate" },
+        { key: "sixth", dateKey: "sixthReviseDate" },
+    ]
 
-    // second
-    todayReviseList.push(
-        ...secondReviseList.filter(t =>
-            t.secondReviseDate.startsWith(today)
-        )
-    )
-
-    // third
-    todayReviseList.push(
-        ...thirdReviseList.filter(t =>
-            t.thirdReviseDate.startsWith(today)
-        )
-    )
-
-    // fourth
-    todayReviseList.push(
-        ...fourthReviseList.filter(t =>
-            t.fourthReviseDate.startsWith(today)
-        )
-    )
-
-    // fifth
-    todayReviseList.push(
-        ...fifthReviseList.filter(t =>
-            t.fifthReviseDate.startsWith(today)
-        )
-    )
-
-    // sixth
-    todayReviseList.push(
-        ...sixthReviseList.filter(t =>
-            t.sixthReviseDate.startsWith(today)
-        )
-    )
+    for (let file of allFiles) {
+        const data = readRevesionData(allFiles.key);
+        const filterd = data.filter(task => task[file.dateKey]?.startsWith(today));
+        todayReviseList.push(
+            ...filterd.map((task, idx) => ({
+                name: `${task.task} (${file.key} revision)`,
+                value: { ...task, revision: file.key }
+            }))
+        );
+    }
 
     if (todayReviseList.length === 0) {
+        console.log("Nothing to revise today !! ");
+        await delay(1000);
+        console.clear();
         return;
     }
 
@@ -164,19 +144,21 @@ const showTodaysRevisionList = async () => {
 // temperory functions
 const first = async () => {
 
-    console.log(firstReviseList);
-    console.log("-------------------------------------------------------------");
-    console.log(secondReviseList);
-    console.log("-------------------------------------------------------------");
-    console.log(thirdReviseList);
-    console.log("-------------------------------------------------------------");
-    console.log(fourthReviseList);
-    console.log("-------------------------------------------------------------");
-    console.log(fifthReviseList);
-    console.log("-------------------------------------------------------------");
-    console.log(sixthReviseList);
-    console.log("-------------------------------------------------------------");
-    await delay(9000);
+    const data = readRevesionData("first");
+
+    console.log(data);
+    // console.log("-------------------------------------------------------------");
+    // console.log(secondReviseList);
+    // console.log("-------------------------------------------------------------");
+    // console.log(thirdReviseList);
+    // console.log("-------------------------------------------------------------");
+    // console.log(fourthReviseList);
+    // console.log("-------------------------------------------------------------");
+    // console.log(fifthReviseList);
+    // console.log("-------------------------------------------------------------");
+    // console.log(sixthReviseList);
+    // console.log("-------------------------------------------------------------");
+    await delay(90000);
     console.clear();
     return;
 }
@@ -200,9 +182,54 @@ const menu = async () => {
         } else if (menuResponse.choice === "seeReviseList") {
             await showTodaysRevisionList();
         } else if (menuResponse.choice === "Exit") {
-            exit = true;
+            // exit = true;
+            await first();
         }
     }
 }
 
 menu();
+
+
+//----------------------------------------------------------------------------------------------------------
+// first
+// todayReviseList.push(
+//     ...firstReviseList.filter(t =>
+//         t.firstReviseDate.startsWith(today)
+//     )
+// )
+
+// // second
+// todayReviseList.push(
+//     ...secondReviseList.filter(t =>
+//         t.secondReviseDate.startsWith(today)
+//     )
+// )
+
+// // third
+// todayReviseList.push(
+//     ...thirdReviseList.filter(t =>
+//         t.thirdReviseDate.startsWith(today)
+//     )
+// )
+
+// // fourth
+// todayReviseList.push(
+//     ...fourthReviseList.filter(t =>
+//         t.fourthReviseDate.startsWith(today)
+//     )
+// )
+
+// // fifth
+// todayReviseList.push(
+//     ...fifthReviseList.filter(t =>
+//         t.fifthReviseDate.startsWith(today)
+//     )
+// )
+
+// // sixth
+// todayReviseList.push(
+//     ...sixthReviseList.filter(t =>
+//         t.sixthReviseDate.startsWith(today)
+//     )
+// )
