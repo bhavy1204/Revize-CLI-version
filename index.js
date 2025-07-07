@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-
+import { writeRevesionData } from './filehandler.js';
 import inquirer from 'inquirer';
 
 let todayReviseList = [];
@@ -33,11 +33,15 @@ const updatetodayStudyLog = async () => {
     let localDate = new Date(ISOdate).toLocaleString();
     todayStudyLog.push({ task: listResponse.studyLog, note: listResponse.notes, ISOdate, localDate, done: false });
 
+    writeRevesionData("today", todayStudyLog);
+
     // Next day
     let firstReviseDateObj = new Date(new Date(ISOdate).getTime() + 86400000);
     let firstReviseDate = firstReviseDateObj.toISOString();
     let firstReviseDateLocal = firstReviseDateObj.toLocaleString();
     firstReviseList.push({ task: listResponse.studyLog, note: listResponse.notes, firstReviseDate, firstReviseDateLocal, done: false });
+
+    writeRevesionData("first", firstReviseList);
 
     // 3 days
     let secondReviseDateObj = new Date(new Date(ISOdate).getTime() + 259200000);
@@ -45,11 +49,15 @@ const updatetodayStudyLog = async () => {
     let secondReviseDateLocal = secondReviseDateObj.toLocaleString();
     secondReviseList.push({ task: listResponse.studyLog, note: listResponse.notes, secondReviseDate, secondReviseDateLocal, done: false });
 
+    writeRevesionData("second", secondReviseList);
+
     // 7 days
     let thirdReviseDateObj = new Date(new Date(ISOdate).getTime() + 604800000);
     let thirdReviseDate = thirdReviseDateObj.toISOString();
     let thirdReviseDateLocal = thirdReviseDateObj.toLocaleString();
     thirdReviseList.push({ task: listResponse.studyLog, note: listResponse.notes, thirdReviseDate, thirdReviseDateLocal, done: false });
+
+    writeRevesionData("third", thirdReviseList);
 
     // 30 days
     let fourthReviseDateObj = new Date(new Date(ISOdate).getTime() + 2592000000);
@@ -57,17 +65,23 @@ const updatetodayStudyLog = async () => {
     let fourthReviseDateLocal = fourthReviseDateObj.toLocaleString();
     fourthReviseList.push({ task: listResponse.studyLog, note: listResponse.notes, fourthReviseDate, fourthReviseDateLocal, done: false });
 
+    writeRevesionData("fourth", fourthReviseList);
+
     // 60 days
     let fifthReviseDateObj = new Date(new Date(ISOdate).getTime() + 5184000000);
     let fifthReviseDate = fifthReviseDateObj.toISOString();
     let fifthReviseDateLocal = fifthReviseDateObj.toLocaleString();
     fifthReviseList.push({ task: listResponse.studyLog, note: listResponse.notes, fifthReviseDate, fifthReviseDateLocal, done: false });
 
+    writeRevesionData("fifth", fifthReviseList);
+
     // 90 days
     let sixthReviseDateObj = new Date(new Date(ISOdate).getTime() + 7776000000);
     let sixthReviseDate = sixthReviseDateObj.toISOString();
     let sixthReviseDateLocal = sixthReviseDateObj.toLocaleString();
     sixthReviseList.push({ task: listResponse.studyLog, note: listResponse.notes, sixthReviseDate, sixthReviseDateLocal, done: false });
+
+    writeRevesionData("sixth", sixthReviseList);
 
 
     console.log("Saved successfully");
@@ -186,8 +200,7 @@ const menu = async () => {
         } else if (menuResponse.choice === "seeReviseList") {
             await showTodaysRevisionList();
         } else if (menuResponse.choice === "Exit") {
-            await first();
-            // exit = true;
+            exit = true;
         }
     }
 }
