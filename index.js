@@ -36,37 +36,37 @@ const updatetodayStudyLog = async () => {
     // Next day
     let firstReviseDateObj = new Date(new Date(ISOdate).getTime() + 86400000);
     let firstReviseDate = firstReviseDateObj.toISOString();
-    let firstReviseDateLocal = firstReviseDate.toLocaleString();
+    let firstReviseDateLocal = firstReviseDateObj.toLocaleString();
     firstReviseList.push({ task: listResponse.studyLog, note: listResponse.notes, firstReviseDate, firstReviseDateLocal, done: false });
 
     // 3 days
     let secondReviseDateObj = new Date(new Date(ISOdate).getTime() + 259200000);
     let secondReviseDate = secondReviseDateObj.toISOString();
-    let secondReviseDateLocal = secondReviseDate.toLocaleString();
+    let secondReviseDateLocal = secondReviseDateObj.toLocaleString();
     secondReviseList.push({ task: listResponse.studyLog, note: listResponse.notes, secondReviseDate, secondReviseDateLocal, done: false });
 
     // 7 days
     let thirdReviseDateObj = new Date(new Date(ISOdate).getTime() + 604800000);
     let thirdReviseDate = thirdReviseDateObj.toISOString();
-    let thirdReviseDateLocal = thirdReviseDate.toLocaleString();
+    let thirdReviseDateLocal = thirdReviseDateObj.toLocaleString();
     thirdReviseList.push({ task: listResponse.studyLog, note: listResponse.notes, thirdReviseDate, thirdReviseDateLocal, done: false });
 
     // 30 days
     let fourthReviseDateObj = new Date(new Date(ISOdate).getTime() + 2592000000);
     let fourthReviseDate = fourthReviseDateObj.toISOString();
-    let fourthReviseDateLocal = fourthReviseDate.toLocaleString();
+    let fourthReviseDateLocal = fourthReviseDateObj.toLocaleString();
     fourthReviseList.push({ task: listResponse.studyLog, note: listResponse.notes, fourthReviseDate, fourthReviseDateLocal, done: false });
 
     // 60 days
     let fifthReviseDateObj = new Date(new Date(ISOdate).getTime() + 5184000000);
     let fifthReviseDate = fifthReviseDateObj.toISOString();
-    let fifthReviseDateLocal = fifthReviseDate.toLocaleString();
+    let fifthReviseDateLocal = fifthReviseDateObj.toLocaleString();
     fifthReviseList.push({ task: listResponse.studyLog, note: listResponse.notes, fifthReviseDate, fifthReviseDateLocal, done: false });
 
     // 90 days
     let sixthReviseDateObj = new Date(new Date(ISOdate).getTime() + 7776000000);
     let sixthReviseDate = sixthReviseDateObj.toISOString();
-    let sixthReviseDateLocal = sixthReviseDate.toLocaleString();
+    let sixthReviseDateLocal = sixthReviseDateObj.toLocaleString();
     sixthReviseList.push({ task: listResponse.studyLog, note: listResponse.notes, sixthReviseDate, sixthReviseDateLocal, done: false });
 
 
