@@ -28,13 +28,14 @@ const updatetodayStudyLog = async () => {
         type: "input"
     }
     ]);
+    todayReviseList = readRevesionData("today");
     let ISOdate = new Date().toISOString();
     let localDate = new Date(ISOdate).toLocaleString();
     todayStudyLog.push({ task: listResponse.studyLog, note: listResponse.notes, ISOdate, localDate, done: false });
-
     writeRevesionData("today", todayStudyLog);
 
     // Next day
+    firstReviseList = readRevesionData("first");
     let firstReviseDateObj = new Date(new Date(ISOdate).getTime() + 86400000);
     let firstReviseDate = firstReviseDateObj.toISOString();
     let firstReviseDateLocal = firstReviseDateObj.toLocaleString();
@@ -43,6 +44,7 @@ const updatetodayStudyLog = async () => {
     writeRevesionData("first", firstReviseList);
 
     // 3 days
+    secondReviseList = readRevesionData("second");
     let secondReviseDateObj = new Date(new Date(ISOdate).getTime() + 259200000);
     let secondReviseDate = secondReviseDateObj.toISOString();
     let secondReviseDateLocal = secondReviseDateObj.toLocaleString();
@@ -51,6 +53,7 @@ const updatetodayStudyLog = async () => {
     writeRevesionData("second", secondReviseList);
 
     // 7 days
+    thirdReviseList = readRevesionData("third");
     let thirdReviseDateObj = new Date(new Date(ISOdate).getTime() + 604800000);
     let thirdReviseDate = thirdReviseDateObj.toISOString();
     let thirdReviseDateLocal = thirdReviseDateObj.toLocaleString();
@@ -59,6 +62,7 @@ const updatetodayStudyLog = async () => {
     writeRevesionData("third", thirdReviseList);
 
     // 30 days
+    fourthReviseList = readRevesionData("fourth");
     let fourthReviseDateObj = new Date(new Date(ISOdate).getTime() + 2592000000);
     let fourthReviseDate = fourthReviseDateObj.toISOString();
     let fourthReviseDateLocal = fourthReviseDateObj.toLocaleString();
@@ -67,6 +71,7 @@ const updatetodayStudyLog = async () => {
     writeRevesionData("fourth", fourthReviseList);
 
     // 60 days
+    fifthReviseList = readRevesionData("fifth");
     let fifthReviseDateObj = new Date(new Date(ISOdate).getTime() + 5184000000);
     let fifthReviseDate = fifthReviseDateObj.toISOString();
     let fifthReviseDateLocal = fifthReviseDateObj.toLocaleString();
@@ -75,6 +80,7 @@ const updatetodayStudyLog = async () => {
     writeRevesionData("fifth", fifthReviseList);
 
     // 90 days
+    sixthReviseList = readRevesionData("sixth");
     let sixthReviseDateObj = new Date(new Date(ISOdate).getTime() + 7776000000);
     let sixthReviseDate = sixthReviseDateObj.toISOString();
     let sixthReviseDateLocal = sixthReviseDateObj.toLocaleString();
@@ -104,7 +110,7 @@ const showTodaysRevisionList = async () => {
     ]
 
     for (let file of allFiles) {
-        const data = readRevesionData(allFiles.key);
+        const data = readRevesionData(file.key);
         const filterd = data.filter(task => task[file.dateKey]?.startsWith(today));
         todayReviseList.push(
             ...filterd.map((task, idx) => ({
@@ -145,19 +151,7 @@ const showTodaysRevisionList = async () => {
 const first = async () => {
 
     const data = readRevesionData("first");
-
     console.log(data);
-    // console.log("-------------------------------------------------------------");
-    // console.log(secondReviseList);
-    // console.log("-------------------------------------------------------------");
-    // console.log(thirdReviseList);
-    // console.log("-------------------------------------------------------------");
-    // console.log(fourthReviseList);
-    // console.log("-------------------------------------------------------------");
-    // console.log(fifthReviseList);
-    // console.log("-------------------------------------------------------------");
-    // console.log(sixthReviseList);
-    // console.log("-------------------------------------------------------------");
     await delay(90000);
     console.clear();
     return;
@@ -189,47 +183,3 @@ const menu = async () => {
 }
 
 menu();
-
-
-//----------------------------------------------------------------------------------------------------------
-// first
-// todayReviseList.push(
-//     ...firstReviseList.filter(t =>
-//         t.firstReviseDate.startsWith(today)
-//     )
-// )
-
-// // second
-// todayReviseList.push(
-//     ...secondReviseList.filter(t =>
-//         t.secondReviseDate.startsWith(today)
-//     )
-// )
-
-// // third
-// todayReviseList.push(
-//     ...thirdReviseList.filter(t =>
-//         t.thirdReviseDate.startsWith(today)
-//     )
-// )
-
-// // fourth
-// todayReviseList.push(
-//     ...fourthReviseList.filter(t =>
-//         t.fourthReviseDate.startsWith(today)
-//     )
-// )
-
-// // fifth
-// todayReviseList.push(
-//     ...fifthReviseList.filter(t =>
-//         t.fifthReviseDate.startsWith(today)
-//     )
-// )
-
-// // sixth
-// todayReviseList.push(
-//     ...sixthReviseList.filter(t =>
-//         t.sixthReviseDate.startsWith(today)
-//     )
-// )
