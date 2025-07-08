@@ -103,6 +103,9 @@ const updatetodayStudyLog = async () => {
 }
 
 const updateTodayRevisionList = () => {
+
+    todayReviseList = [];
+    
     const allFiles = [
         { key: "first", dateKey: "firstReviseDate" },
         { key: "second", dateKey: "secondReviseDate" },
@@ -114,7 +117,7 @@ const updateTodayRevisionList = () => {
 
     for (let file of allFiles) {
         const data = readRevesionData(file.key);
-        const filterd = data.filter(task => task[file.dateKey]?.startsWith(today) && task.done===false);
+        const filterd = data.filter(task => task[file.dateKey]?.startsWith(today) && task.done === false);
         todayReviseList.push(
             ...filterd.map((task, idx) => ({
                 name: `${idx + 1}. ${task.task} (${file.key} revision)`,
