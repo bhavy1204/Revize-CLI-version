@@ -11,11 +11,16 @@ let fourthReviseList = [];
 let fifthReviseList = [];
 let sixthReviseList = [];
 
+// For today's revesion list
+let today = new Date().toISOString().slice(0, 10);
+
+// Helper function 
 const delay = (ms) =>
     new Promise((r) =>
         setTimeout(r, ms)
     );
 
+// To update today's study log
 const updatetodayStudyLog = async () => {
     const listResponse = await inquirer.prompt([{
         message: "What did you study....?",
@@ -28,13 +33,15 @@ const updatetodayStudyLog = async () => {
         type: "input"
     }
     ]);
+
+    // saving to today's study list
     todayReviseList = readRevesionData("today");
     let ISOdate = new Date().toISOString();
     let localDate = new Date(ISOdate).toLocaleString();
     todayStudyLog.push({ task: listResponse.studyLog, note: listResponse.notes, ISOdate, localDate, done: false });
     writeRevesionData("today", todayStudyLog);
 
-    // Next day
+    // saving Next day
     firstReviseList = readRevesionData("first");
     let firstReviseDateObj = new Date(new Date(ISOdate).getTime() + 86400000);
     let firstReviseDate = firstReviseDateObj.toISOString();
@@ -43,7 +50,7 @@ const updatetodayStudyLog = async () => {
 
     writeRevesionData("first", firstReviseList);
 
-    // 3 days
+    // saving 3 days
     secondReviseList = readRevesionData("second");
     let secondReviseDateObj = new Date(new Date(ISOdate).getTime() + 259200000);
     let secondReviseDate = secondReviseDateObj.toISOString();
@@ -52,7 +59,7 @@ const updatetodayStudyLog = async () => {
 
     writeRevesionData("second", secondReviseList);
 
-    // 7 days
+    // saving 7 days
     thirdReviseList = readRevesionData("third");
     let thirdReviseDateObj = new Date(new Date(ISOdate).getTime() + 604800000);
     let thirdReviseDate = thirdReviseDateObj.toISOString();
@@ -61,7 +68,7 @@ const updatetodayStudyLog = async () => {
 
     writeRevesionData("third", thirdReviseList);
 
-    // 30 days
+    // saving 30 days
     fourthReviseList = readRevesionData("fourth");
     let fourthReviseDateObj = new Date(new Date(ISOdate).getTime() + 2592000000);
     let fourthReviseDate = fourthReviseDateObj.toISOString();
@@ -70,7 +77,7 @@ const updatetodayStudyLog = async () => {
 
     writeRevesionData("fourth", fourthReviseList);
 
-    // 60 days
+    // saving 60 days
     fifthReviseList = readRevesionData("fifth");
     let fifthReviseDateObj = new Date(new Date(ISOdate).getTime() + 5184000000);
     let fifthReviseDate = fifthReviseDateObj.toISOString();
@@ -79,7 +86,7 @@ const updatetodayStudyLog = async () => {
 
     writeRevesionData("fifth", fifthReviseList);
 
-    // 90 days
+    // saving 90 days
     sixthReviseList = readRevesionData("sixth");
     let sixthReviseDateObj = new Date(new Date(ISOdate).getTime() + 7776000000);
     let sixthReviseDate = sixthReviseDateObj.toISOString();
@@ -95,11 +102,7 @@ const updatetodayStudyLog = async () => {
     return;
 }
 
-const showTodaysRevisionList = async () => {
-
-    let today = new Date().toISOString().slice(0, 10);
-    todayReviseList = [];
-
+const updateTodayRevisionList = () => {
     const allFiles = [
         { key: "first", dateKey: "firstReviseDate" },
         { key: "second", dateKey: "secondReviseDate" },
@@ -111,14 +114,54 @@ const showTodaysRevisionList = async () => {
 
     for (let file of allFiles) {
         const data = readRevesionData(file.key);
-        const filterd = data.filter(task => task[file.dateKey]?.startsWith(today));
+        const filterd = data.filter(task => task[file.dateKey]?.startsWith(today) && task.done===false);
         todayReviseList.push(
             ...filterd.map((task, idx) => ({
-                name: `${task.task} (${file.key} revision)`,
+                name: `${idx + 1}. ${task.task} (${file.key} revision)`,
                 value: { ...task, revision: file.key }
             }))
         );
     }
+}
+
+const viewDetailsOfLog = async (task) => {
+    updateTodayRevisionList();
+    console.clear();
+
+    console.log(`TASK: ${task}`);
+    // console.log(`Studied on :${task.localDate}`);
+    const res = await inquirer.prompt([{
+        message: "Choose operation:-  ",
+        name: "operation",
+        type: "list",
+        choices: [
+            { name: "Mark as done", value: "markAsDone" },
+            { name: "Go back", value: "back" }
+        ]
+    }])
+
+    if (res.operation === "markAsDone") {
+        console.log("Ho jayega ye bhi");
+
+        const allTasks = readRevesionData(task.revision);
+        const updated = allTasks.map(t =>
+            t.task === task.task &&
+                t[`${task.revision}ReviseDate`] === task[`${task.revision}ReviseDate`]
+                ? { ...t, done: true }
+                : t
+        );
+        writeRevesionData(task.revision, updated);
+        return;
+    } else if (res.operation === "Go back") {
+        delay(1000);
+        console.clear();
+        return;
+    }
+}
+
+const showTodaysRevisionList = async () => {
+
+    updateTodayRevisionList();
 
     if (todayReviseList.length === 0) {
         console.log("Nothing to revise today !! ");
@@ -127,7 +170,7 @@ const showTodaysRevisionList = async () => {
         return;
     }
 
-    todayReviseList.push({ name: ">>> Go bak", value: -1 });
+    todayReviseList.push({ name: ">>> GO BACK", value: -1 });
 
     const selected = await inquirer.prompt([{
         name: "revesionList",
@@ -137,22 +180,14 @@ const showTodaysRevisionList = async () => {
     }]);
 
     if (selected.revesionList === -1) {
+        delay(1000);
+        console.clear();
         return;
     }
 
-    // await viewDetailsOfLog(selected);
+    await viewDetailsOfLog(selected.revesionList);
 
-    await delay(2000);
-    console.clear();
-    return;
-}
-
-// temperory functions
-const first = async () => {
-
-    const data = readRevesionData("first");
-    console.log(data);
-    await delay(90000);
+    await delay(1000);
     console.clear();
     return;
 }
@@ -176,8 +211,7 @@ const menu = async () => {
         } else if (menuResponse.choice === "seeReviseList") {
             await showTodaysRevisionList();
         } else if (menuResponse.choice === "Exit") {
-            // exit = true;
-            await first();
+            exit = true;
         }
     }
 }
