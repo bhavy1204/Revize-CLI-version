@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { readRevesionData, writeRevesionData } from './filehandler.js';
 import inquirer from 'inquirer';
+import { log } from './log.js';
 
 let todayReviseList = [];
 let todayStudyLog = [];
@@ -96,7 +97,7 @@ const updatetodayStudyLog = async () => {
     writeRevesionData("sixth", sixthReviseList);
 
 
-    console.log("Saved successfully");
+    console.log(log.brightGreen("Saved successflly"));
     await delay(2000);
     console.clear();
     return;
@@ -105,7 +106,7 @@ const updatetodayStudyLog = async () => {
 const updateTodayRevisionList = () => {
 
     todayReviseList = [];
-    
+
     const allFiles = [
         { key: "first", dateKey: "firstReviseDate" },
         { key: "second", dateKey: "secondReviseDate" },
@@ -134,17 +135,16 @@ const viewDetailsOfLog = async (task) => {
     console.log(`TASK: ${task}`);
     // console.log(`Studied on :${task.localDate}`);
     const res = await inquirer.prompt([{
-        message: "Choose operation:-  ",
+        message: log.cyan("Choose operation:-  "),
         name: "operation",
         type: "list",
         choices: [
-            { name: "Mark as done", value: "markAsDone" },
-            { name: "Go back", value: "back" }
+            { name: log.yellow("Mark as done "), value: "markAsDone" },
+            { name: log.gray("Go back"), value: "Go back" }
         ]
     }])
 
     if (res.operation === "markAsDone") {
-        console.log("Ho jayega ye bhi");
 
         const allTasks = readRevesionData(task.revision);
         const updated = allTasks.map(t =>
@@ -154,6 +154,7 @@ const viewDetailsOfLog = async (task) => {
                 : t
         );
         writeRevesionData(task.revision, updated);
+        console.log(log.brightGreen("Marked as Done"));
         return;
     } else if (res.operation === "Go back") {
         delay(1000);
@@ -167,18 +168,18 @@ const showTodaysRevisionList = async () => {
     updateTodayRevisionList();
 
     if (todayReviseList.length === 0) {
-        console.log("Nothing to revise today !! ");
+        console.log(log.yellow("Nothing to revise today"));
         await delay(1000);
         console.clear();
         return;
     }
 
-    todayReviseList.push({ name: ">>> GO BACK", value: -1 });
+    todayReviseList.push({ name: log.gray(">>> GO BACK"), value: -1 });
 
     const selected = await inquirer.prompt([{
         name: "revesionList",
         type: "list",
-        message: "Choose any one",
+        message: log.cyan("Choose any one"),
         choices: todayReviseList,
     }]);
 
@@ -198,20 +199,22 @@ const showTodaysRevisionList = async () => {
 const menu = async () => {
     let exit = false;
     while (!exit) {
-        console.log("-------------Revize-----------------");
+        console.log(log.yellow("-------------Revize-----------------"));
         let menuResponse = await inquirer.prompt([{
             name: "choice",
-            message: "Choose an option :-",
+            message: log.cyan("Choose an option :-"),
             type: "list",
             choices: [
-                { name: "1. Update today's log", value: "updateTask" },
-                { name: "2. Today's revision task", value: "seeReviseList" },
-                { name: "3. Exit", value: "Exit" }
+                { name: log.blueBold("1. Update today's log"), value: "updateTask" },
+                { name: log.blueBold("2. Today's revision task"), value: "seeReviseList" },
+                { name: log.blueBold("3. Exit"), value: "Exit" }
             ]
         }])
         if (menuResponse.choice === "updateTask") {
+            console.clear();
             await updatetodayStudyLog();
         } else if (menuResponse.choice === "seeReviseList") {
+            console.clear();
             await showTodaysRevisionList();
         } else if (menuResponse.choice === "Exit") {
             exit = true;
