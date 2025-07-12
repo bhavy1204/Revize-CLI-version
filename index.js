@@ -11,9 +11,21 @@ let thirdReviseList = [];
 let fourthReviseList = [];
 let fifthReviseList = [];
 let sixthReviseList = [];
+let todoList = [];
+
+const allFiles = [
+    { key: "first", dateKey: "firstReviseDate" },
+    { key: "second", dateKey: "secondReviseDate" },
+    { key: "third", dateKey: "thirdReviseDate" },
+    { key: "fourth", dateKey: "fourthReviseDate" },
+    { key: "fifth", dateKey: "fifthReviseDate" },
+    { key: "sixth", dateKey: "sixthReviseDate" },
+    { key: "todayTODO", dateKey: "todayTODO" },
+]
 
 // For today's revesion list
 let today = new Date().toISOString().slice(0, 10);
+let todayLocalDate = new Date().toLocaleString();
 
 // Helper function 
 const delay = (ms) =>
@@ -107,15 +119,6 @@ const updateTodayRevisionList = () => {
 
     todayReviseList = [];
 
-    const allFiles = [
-        { key: "first", dateKey: "firstReviseDate" },
-        { key: "second", dateKey: "secondReviseDate" },
-        { key: "third", dateKey: "thirdReviseDate" },
-        { key: "fourth", dateKey: "fourthReviseDate" },
-        { key: "fifth", dateKey: "fifthReviseDate" },
-        { key: "sixth", dateKey: "sixthReviseDate" },
-    ]
-
     for (let file of allFiles) {
         const data = readRevesionData(file.key);
         const filterd = data.filter(task => task[file.dateKey]?.startsWith(today) && task.done === false);
@@ -126,6 +129,12 @@ const updateTodayRevisionList = () => {
             }))
         );
     }
+}
+
+const updateTodayTODOList = () => {
+    todoList=[];
+    const data = readRevesionData("todayTODO");
+    todoList=data;
 }
 
 const viewDetailsOfLog = async (task) => {
@@ -196,6 +205,46 @@ const showTodaysRevisionList = async () => {
     return;
 }
 
+const updateToDoList = async () => {
+    const res = await inquirer.prompt([{
+        message: "Enter task : ",
+        name: "task",
+        type: "input",
+        required: true
+    }, {
+        message: "Enter priority",
+        name: "priority",
+        type: "list",
+        choices: [
+            { name: "High", value: "high" },
+            { name: "moderate", value: "moderate" },
+            { name: "low", value: "low" },
+        ]
+    }]);
+    if (res.task.trim() === "") {
+        console.log("Enter a valid task");
+    } else {
+        todoList.push({ task: res.task, priority: res.priority, date: todayLocalDate });
+        writeRevesionData("todayTODO", "todayTODO");
+        console.log("Addedd successfully");
+        delay(1000);
+    }
+
+}
+
+const showToDoList = async () => {
+    updateToDoList();
+
+    todoList.push({task:"GO BACK..."});
+
+    const res = await inquirer.prompt([{
+        message:"Todays tasks:-",
+        type:"list",
+        choices:todoList
+    }]);
+    delay(5000);
+}
+
 const menu = async () => {
     let exit = false;
     while (!exit) {
@@ -207,7 +256,9 @@ const menu = async () => {
             choices: [
                 { name: log.blueBold("1. Update today's log"), value: "updateTask" },
                 { name: log.blueBold("2. Today's revision task"), value: "seeReviseList" },
-                { name: log.blueBold("3. Exit"), value: "Exit" }
+                { name: log.blueBold("3. Update Today's ToDo list"), value: "updateToDolist" },
+                { name: log.blueBold("4. Today's ToDo list"), value: "seeToDoList" },
+                { name: log.blueBold("5. Exit"), value: "Exit" }
             ]
         }])
         if (menuResponse.choice === "updateTask") {
@@ -216,6 +267,12 @@ const menu = async () => {
         } else if (menuResponse.choice === "seeReviseList") {
             console.clear();
             await showTodaysRevisionList();
+        } else if (menuResponse.choice === "updateToDolist") {
+            console.clear();
+            await updateToDoList();
+        } else if (menuResponse.choice === "seeToDoList") {
+            console.clear();
+            await showToDoList();
         } else if (menuResponse.choice === "Exit") {
             exit = true;
         }
