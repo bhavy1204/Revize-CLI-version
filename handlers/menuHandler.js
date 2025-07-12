@@ -1,5 +1,8 @@
 import inquirer from "inquirer";
 import { log } from "./log.js";
+import { updateToDoList, showToDoList } from "./todoHandler.js";
+import { showTodaysRevisionList, updatetodayStudyLog } from "./revisionHandler.js";
+
 
 export async function menu(){
     let exit = false;

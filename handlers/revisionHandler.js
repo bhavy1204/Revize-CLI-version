@@ -1,12 +1,10 @@
 import inquirer from 'inquirer';
 
 let today = new Date().toISOString().slice(0, 10);
-let todayLocalDate = new Date().toLocaleString();
 
-
-import { readRevesionData, writeRevesionData } from './filehandler.js';
-import inquirer from 'inquirer';
+import { readRevesionData, writeRevesionData } from '../filehandler/filehandler.js';
 import { log } from './log.js';
+import { delay } from './utils.js';
 
 let todayReviseList = [];
 let todayStudyLog = [];
@@ -28,7 +26,7 @@ const allFiles = [
 ]
 
 // To update today's study log
-const updatetodayStudyLog = async () => {
+export async function updatetodayStudyLog(){
     const listResponse = await inquirer.prompt([{
         message: "What did you study....?",
         name: "studyLog",
@@ -110,7 +108,7 @@ const updatetodayStudyLog = async () => {
 }
 //----------------------------------------------------------------------------------------------------------
 
-const updateTodayRevisionList = () => {
+export async function updateTodayRevisionList(){
 
     todayReviseList = [];
 
@@ -125,21 +123,12 @@ const updateTodayRevisionList = () => {
         );
     }
 }
-//----------------------------------------------------------------------------------------------------------
-const updateTodayTODOList = () => {
-    todoList = [];
-    const data = readRevesionData("todayTODO");
-    todoList = data;
-}
 
-//----------------------------------------------------------------------------------------------------------
-
-const viewDetailsOfLog = async (task) => {
+export async function viewDetailsOfLog(task){
     updateTodayRevisionList();
     console.clear();
 
     console.log(`TASK: ${task}`);
-    // console.log(`Studied on :${task.localDate}`);
     const res = await inquirer.prompt([{
         message: log.cyan("Choose operation:-  "),
         name: "operation",
@@ -170,7 +159,7 @@ const viewDetailsOfLog = async (task) => {
 }
 
 
-const showTodaysRevisionList = async () => {
+export async function showTodaysRevisionList(){
 
     updateTodayRevisionList();
 

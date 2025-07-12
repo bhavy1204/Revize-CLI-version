@@ -1,8 +1,12 @@
 import inquirer from "inquirer";
+import { writeRevesionData,readRevesionData } from "../filehandler/filehandler.js";
+import { delay } from "./utils.js";
 
+let todayLocalDate = new Date().toLocaleString();
+let today = new Date().toISOString().slice(0,10);
 let todoList = [];
 
-const updateToDoList = async () => {
+export async function updateToDoList(){
     const res = await inquirer.prompt([{
         message: "Enter task : ",
         name: "task",
@@ -30,7 +34,7 @@ const updateToDoList = async () => {
 
 }
 
-const showToDoList = async () => {
+export async function showToDoList(){
     updateToDoList();
 
     todoList.push({ task: "GO BACK..." });
@@ -41,4 +45,10 @@ const showToDoList = async () => {
         choices: todoList
     }]);
     delay(5000);
+}
+//----------------------------------------------------------------------------------------------------------
+export async function updateTodayTODOList(){
+    todoList = [];
+    const data = readRevesionData("todayTODO");
+    todoList = data;
 }
