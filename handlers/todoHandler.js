@@ -1,12 +1,13 @@
 import inquirer from "inquirer";
-import { writeRevesionData,readRevesionData } from "../filehandler/filehandler.js";
+import { writeRevesionData, readRevesionData } from "../filehandler/filehandler.js";
 import { delay } from "./utils.js";
 
 let todayLocalDate = new Date().toLocaleString();
-let today = new Date().toISOString().slice(0,10);
+let today = new Date().toISOString().slice(0, 10);
 let todoList = [];
 
-export async function updateToDoList(){
+export async function updateToDoList() {
+    await updateTodayTODOList();
     const res = await inquirer.prompt([{
         message: "Enter task : ",
         name: "task",
@@ -27,28 +28,37 @@ export async function updateToDoList(){
     } else {
         todoList.push({ task: res.task, priority: res.priority, localeDate: todayLocalDate, done: false, compareDate: today });
         writeRevesionData("todayTODO", todoList);
-        console.log("Addedd successfully");
+        console.log("Added successfully");
 
         delay(1000);
     }
 
 }
 
-export async function showToDoList(){
-    updateToDoList();
+export async function showToDoList() {
+    await updateTodayTODOList();
 
-    todoList.push({ task: "GO BACK..." });
+    const choice = todoList.map((t, index) => ({
+        name: `[${t.priority.toUpperCase()}] ${t.task}`,
+        value: index
+    }));
+    choice.push({ name: "GO BACK...", value: -1 });
 
     const res = await inquirer.prompt([{
         message: "Todays tasks:-",
         type: "list",
-        choices: todoList
+        choices: choice
     }]);
-    delay(5000);
+
+     if (res === -1) {
+        console.log("Returning to main menu...");
+    }
+
+    delay(1000);
 }
-//----------------------------------------------------------------------------------------------------------
-export async function updateTodayTODOList(){
+
+export async function updateTodayTODOList() {
     todoList = [];
-    const data = readRevesionData("todayTODO");
+    const data = await readRevesionData("todayTODO");
     todoList = data;
 }
